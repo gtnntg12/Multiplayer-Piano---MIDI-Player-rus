@@ -3,15 +3,14 @@
 // @namespace    https://thealiendrew.github.io/
 // @version      2.5.8
 // @description  Plays MIDI files!
-// @author       AlienDrew
-// @license      GPL-3.0-or-later
+// @author       AlienDrew (modification gtnntg-mpp#4347)
 // @match        https://www.multiplayerpiano.com/*
 // @match        https://multiplayerpiano.com/*
 // @match        https://multiplayerpiano.net/*
 // @match        https://mppclone.com/*
-// @match        https://mpp.hyye.tk/*
 // @updateURL    https://raw.githubusercontent.com/TheAlienDrew/Custom-JS/master/!-User-Scripts/Multiplayer%20Piano/MIDI-Player/MIDI-Player.user.js
 // @downloadURL  https://raw.githubusercontent.com/TheAlienDrew/Custom-JS/master/!-User-Scripts/Multiplayer%20Piano/MIDI-Player/MIDI-Player.user.js
+// @icon         https://raw.githubusercontent.com/TheAlienDrew/Custom-JS/master/!-User-Scripts/Multiplayer%20Piano/MIDI-Player/favicon.png
 // @grant        GM_info
 // @grant        GM_getResourceText
 // @grant        GM_getResourceURL
@@ -87,63 +86,63 @@ const ALLOW_ALL_INTRUMENTS = false; // removes percussion instruments (turning t
 const BOT_SOLO_PLAY = true; // sets what play mode when the bot boots up on an owned room
 
 // Bot custom constants
-const PREFIX = "/";
+const PREFIX = "!";
 const PREFIX_LENGTH = PREFIX.length;
 const BOT_KEYWORD = "MIDI"; // this is used for auto enabling the public commands in a room that contains the keyword (character case doesn't matter)
 const BOT_ACTIVATOR = BOT_KEYWORD.toLowerCase();
 const BOT_NAME = "MIDI Player rus";
 const BOT_USERNAME = BOT_NAME + " [" + PREFIX + "help]";
 const BOT_NAMESPACE = '(' + NAMESPACE + ')';
-const BOT_DESCRIPTION = DESCRIPTION + " Made with JS via Tampermonkey, and thanks to grimmdude for the MIDIPlayerJS library."
+const BOT_DESCRIPTION = DESCRIPTION + " Сделано с помощью JS через Tampermonkey и спасибо grimmdude за библиотеку MIDIPlayerJS."
 const BOT_AUTHOR = "Created by " + AUTHOR + '.';
 const BASE_COMMANDS = [
-    ["help (command)", "displays info about command, but no command entered shows the commands"],
-    ["about", "get information about this bot"],
-    ["link", "get the download link for this bot"],
-    ["feedback", "shows link to send feedback about the bot to the developer"],
+    ["help (command)", "отображает информацию о команде, но ни одна введенная команда не показывает команды"],
+    ["about", "получить информацию об этом боте"],
+    ["link", "получить ссылку для скачивания этого бота"],
+    ["feedback", "показывает ссылку для отправки отзыва о боте разработчику"],
     ["ping", "gets the milliseconds response time"]
 ];
 const BOT_COMMANDS = [
-    ["play [MIDI URL]", "plays a specific song (URL must be a direct link to a MIDI file)"],
-    ["stop", "stops all music from playing"],
+    ["play [MIDI URL]", "воспроизводит определенную песню (URL должен быть прямой ссылкой на MIDI-файл)"],
+    ["stop", "останавливает воспроизведение всей музыки"],
     ["pause", "pauses the music at that moment in the song"],
-    ["resume", "plays music right where pause left off"],
-    ["song", "shows the current song playing and at what moment in time"],
-    ["repeat", "toggles repeating current song on or off"],
-    ["sustain", "toggles how sustain is controlled via either MIDI or by MPP"]
+    ["resume", "воспроизводит музыку с того места, где остановилась пауза"],
+    ["song", "показывает текущую песню и в какой момент времени"],
+    ["repeat", "включает или выключает повтор текущей песни"],
+    ["sustain", "переключает способ управления сустейном через MIDI или MPP"]
 ];
 const BOT_OWNER_COMMANDS = [
-    ["loading", "toggles the MIDI loading progress audio, or text, on or off"],
-    [BOT_ACTIVATOR, "toggles the public bot commands on or off"]
+    ["loading", "включает или выключает аудио или текст процесса загрузки MIDI."],
+    [BOT_ACTIVATOR, "включает или выключает общедоступные команды бота"]
 ];
 const PRE_MSG = BOT_NAME + " (v" + VERSION + "): ";
 const PRE_HELP = PRE_MSG + "[Помощь]";
 const PRE_ABOUT = PRE_MSG + "[О программе]";
 const PRE_LINK = PRE_MSG + "[Ссылка]";
-const PRE_FEEDBACK = PRE_MSG + "[Отзыв]";
-const PRE_PING = PRE_MSG + "[Ping]";
+const PRE_FEEDBACK = PRE_MSG + "[Обратная связь]";
+const PRE_PING = PRE_MSG + "[Пинг]";
 const PRE_PLAY = PRE_MSG + "[Играть]";
 const PRE_STOP = PRE_MSG + "[Стоп]";
 const PRE_PAUSE = PRE_MSG + "[Пауза]";
-const PRE_RESUME = PRE_MSG + "[Продолжить]";
+const PRE_RESUME = PRE_MSG + "[Продолжение]";
 const PRE_SONG = PRE_MSG + "[Песня]";
-const PRE_REPEAT = PRE_MSG + "[Повторение]";
-const PRE_SUSTAIN = PRE_MSG + "[Sustain]";
+const PRE_REPEAT = PRE_MSG + "[Повторить]";
+const PRE_SUSTAIN = PRE_MSG + "[Синтезатор]";
 const PRE_DOWNLOADING = PRE_MSG + "[Скачивание]";
 const PRE_LOAD_MUSIC = PRE_MSG + "[Загрузка музыки]";
 const PRE_PUBLIC = PRE_MSG + "[Публичный]";
-const PRE_LIMITED = PRE_MSG + "Ограничено!";
+const PRE_LIMITED = PRE_MSG + "Полный!";
 const PRE_ERROR = PRE_MSG + "Ошибка!";
-const WHERE_TO_FIND_MIDIS = "Вы можете найти хорошие MIDI-файлы для загрузки на https://bitmidi.com/ и https://midiworld.com/ или использовать свои собственные файлы MIDI через Google Drive/Dropbox и т. д. с прямой ссылкой для скачивания. А ещё Вы можете скачать Из discord сервера clan midi zamer https://discord.gg/ac2NGCZwAR и вставить в бота.";
+const WHERE_TO_FIND_MIDIS = "Вы можете найти хорошие MIDI-файлы для загрузки на сайтах https://bitmidi.com/ и https://midiworld.com/, либо использовать собственные файлы MIDI через Google Drive, Dropbox и другие сервисы с прямой ссылкой для скачивания.";
 const NOT_OWNER = "Бот не является владельцем комнаты";
-const NO_SONG = "Сейчас ничего не играет";
+const NO_SONG = "В данный момент ничего не воспроизводится.";
 const LIST_BULLET = "• ";
 const DESCRIPTION_SEPARATOR = " - ";
 const CONSOLE_IMPORTANT_STYLE = "background-color: red; color: white; font-weight: bold";
 
 // Element constants
 const CSS_VARIABLE_X_DISPLACEMENT = "--xDisplacement";
-const PRE_ELEMENT_ID = "midi-player-bot-rus";
+const PRE_ELEMENT_ID = "aliendrew-midi-player-bot-rus";
 // buttons have some constant styles/classes
 const ELEM_ON = "display:block;";
 const ELEM_OFF = "display:none;";
@@ -304,12 +303,12 @@ const Player = new MidiPlayer.Player(function(event) {
     }
     var currentEvent = event.name;
     if (!exists(currentEvent) || currentEvent == "") return;
-    if (currentEvent.indexOf("Ноты") == 0 && (ALLOW_ALL_INTRUMENTS || event.channel != PERCUSSION_CHANNEL)) {
+    if (currentEvent.indexOf("Нота") == 0 && (ALLOW_ALL_INTRUMENTS || event.channel != PERCUSSION_CHANNEL)) {
         var currentNote = (exists(event.noteName) ? MIDIPlayerToMPPNote[event.noteName] : null);
-        if (currentEvent == "Ноты включены" && event.velocity > 0) { // start note
+        if (currentEvent == "Нота включена" && event.velocity > 0) { // start note
             MPP.press(currentNote, (event.velocity/100));
             if (!sustainOption) MPP.release(currentNote);
-        } else if (sustainOption && (currentEvent == "Ноты Выключены" || event.velocity == 0)) MPP.release(currentNote); // end note
+        } else if (sustainOption && (currentEvent == "Нота выключен" || event.velocity == 0)) MPP.release(currentNote); // end note
     }
     if (!ended && !Player.isPlaying()) {
         ended = true;
@@ -329,7 +328,7 @@ const Player = new MidiPlayer.Player(function(event) {
     }
 });
 // see https://github.com/grimmdude/MidiPlayerJS/issues/25
-Player.sampleRate = 1; // this allows sequential notes that are supposed to play at the same time, do so when using fast MIDIs (e.g. some black MIDIs)
+Player.sampleRate = 0; // this allows sequential notes that are supposed to play at the same time, do so when using fast MIDIs (e.g. some black MIDIs)
 
 // =============================================== FUNCTIONS
 
@@ -495,7 +494,7 @@ var urlToBlob = function(url, callback) {
         clearInterval(downloading);
         callback(blob);
     }).catch(error => {
-        console.error("Обычная выборка не смогла получить файл:", error);
+        console.error("Normal fetch couldn't get the file:", error);
         var corsUrl = useCorsUrl(url);
         if (corsUrl != null) {
             if (loadingOption) startLoadingMusic();
@@ -508,7 +507,7 @@ var urlToBlob = function(url, callback) {
                 stopLoadingMusic();
                 clearInterval(downloading);
                 if (!response.ok) {
-                    throw new Error("Сетевой ответ был не в порядке");
+                    throw new Error("Network response was not ok");
                 }
                 return response.blob();
             }).then(blob => {
@@ -641,7 +640,7 @@ var playSong = function(songFileName, songData) {
                 currentSongDuration = Player.getSongTime();
                 currentSongDurationFormatted = timeClearZeros(secondsToHms(currentSongDuration));
 
-                mppChatSend(PRE_PLAY + ' ' + getSongTimesFormatted(currentSongElapsedFormatted, currentSongDurationFormatted) + " Сейчас играет " + quoteString(currentSongName));
+                mppChatSend(PRE_PLAY + ' ' + getSongTimesFormatted(currentSongElapsedFormatted, currentSongDurationFormatted) + " В этот момент играет " + quoteString(currentSongName));
             } else if (timeoutRecorder == SONG_NAME_TIMEOUT) {
                 clearInterval(showSongName);
             } else timeoutRecorder++;
@@ -678,11 +677,11 @@ var playFile = function(songFile) {
                         currentFileLocation = songFile.name;
                         playSong(songFileName, base64data);
                         uploadButton.value = ""; // reset file input
-                    } else mppChatSend(error + " Неожиданный результат, файл MIDI не может быть загружен");
+                    } else mppChatSend(error + " Unexpected result, MIDI file couldn't load");
                 });
-            } else mppChatSend(error + " Выбранный файл, \"" + songFileName + "\", либо поврежден, либо это не совсем MIDI-файл");
+            } else mppChatSend(error + " Выбранный файл, \"" + songFileName + "\", Файл либо поврежден, либо на самом деле не является файлом MIDI.");
         } else mppChatSend(error + " Выбранный файл, \"" + songFileName + "\",  слишком большой (больше, чем " + MIDI_FILE_SIZE_LIMIT_BYTES + " байт), пожалуйста, выберите файл меньшего размера");
-    } else mppChatSend(error + " MIDI file not found");
+    } else mppChatSend(error + " MIDI-файл не найден");
 }
 
 // Creates the play, pause, resume, and stop button for the bot
@@ -712,7 +711,7 @@ var createButtons = function() {
     uploadBtn.accept = ".mid,.midi";
     uploadBtn.onchange = function() {
         if (!MPP.client.preventsPlaying() && uploadBtn.files.length > 0) playFile(uploadBtn.files[0]);
-        else console.log("MIDI-файл не выбран");
+        else console.log("No MIDI file selected");
     }
     // fix cursor on upload file button
     var head = document.getElementsByTagName('HEAD')[0];
@@ -722,7 +721,7 @@ var createButtons = function() {
     uploadFileBtnFix.setAttribute('href', 'data:text/css;charset=UTF-8,' + encodeURIComponent('#' + uploadBtnId + ", #" + uploadBtnId + "::-webkit-file-upload-button {cursor:pointer}"));
     head.appendChild(uploadFileBtnFix);
     // continue with other html for play button
-    var playTxt = document.createTextNode("Играть");
+    var playTxt = document.createTextNode("Выбрать файл и играть");
     playDiv.appendChild(uploadBtn);
     playDiv.appendChild(playTxt);
     // then we need to let the rest of the script know it so it can reset it after loading files
@@ -738,7 +737,7 @@ var createButtons = function() {
     stopDiv.onclick = function() {
         if (!MPP.client.preventsPlaying()) stop();
     }
-    var stopTxt = document.createTextNode("Стоп");
+    var stopTxt = document.createTextNode("Остановить");
     stopDiv.appendChild(stopTxt);
     buttonContainer.appendChild(stopDiv);
     // REPEAT
@@ -762,7 +761,7 @@ var createButtons = function() {
     songDiv.onclick = function() {
         if (!MPP.client.preventsPlaying()) song();
     }
-    var songTxt = document.createTextNode("Песня");
+    var songTxt = document.createTextNode("Музыка");
     songDiv.appendChild(songTxt);
     buttonContainer.appendChild(songDiv);
     // PAUSE
@@ -798,21 +797,9 @@ var createButtons = function() {
     sustainDiv.onclick = function() {
         if (!MPP.client.preventsPlaying()) sustain();
     }
-    var sustainTxt = document.createTextNode("Выбрать миди или мпп");
+    var sustainTxt = document.createTextNode("Синтезатор");
     sustainDiv.appendChild(sustainTxt);
     buttonContainer.appendChild(sustainDiv);
-        // button
-    nextLocationX += BTN_SPACER_X;
-    var buttonDiv = document.createElement("div");
-    buttonDiv.id = PRE_ELEMENT_ID + "-button";
-    buttonDiv.style = BTN_STYLE + "top:" + BTNS_TOP_1 + "px;left:calc(" + nextLocationX + "px + var(" + CSS_VARIABLE_X_DISPLACEMENT + "));";
-    buttonDiv.classList.add("ugly-button");
-    buttonDiv.onclick = function() {
-        if (!MPP.client.preventsPlaying()) button();
-    }
-    var buttonTxt = document.createTextNode("test button");
-    buttonDiv.appendChild(buttonTxt);
-    buttonContainer.appendChild(buttonDiv);
     // PUBLIC
     nextLocationX += BTN_SPACER_X;
     var publicDiv = document.createElement("div");
@@ -882,9 +869,9 @@ var help = function(command, userId, yourId) {
     var isOwner = MPP.client.isOwner();
     if (!exists(command) || command == "") {
         var publicCommands = formattedCommands(BOT_COMMANDS, LIST_BULLET + PREFIX, true);
-        mppChatSend(PRE_HELP + " Commands: " + formattedCommands(BASE_COMMANDS, LIST_BULLET + PREFIX, true)
+        mppChatSend(PRE_HELP + " Команды: " + formattedCommands(BASE_COMMANDS, LIST_BULLET + PREFIX, true)
                              + (publicOption ? ' ' + publicCommands : '')
-                             + (userId == yourId ? " | Bot Owner Commands: " + (publicOption ? '' : publicCommands + ' ') + formattedCommands(BOT_OWNER_COMMANDS, LIST_BULLET + PREFIX, true) : ''));
+                             + (userId == yourId ? " | Команды владельца бота: " + (publicOption ? '' : publicCommands + ' ') + formattedCommands(BOT_OWNER_COMMANDS, LIST_BULLET + PREFIX, true) : ''));
     } else {
         var valid = null;
         var commandIndex = null;
@@ -924,7 +911,7 @@ var about = function() {
     mppChatSend(PRE_ABOUT + ' ' + BOT_DESCRIPTION + ' ' + BOT_AUTHOR + ' ' + BOT_NAMESPACE);
 }
 var link = function() {
-    mppChatSend(PRE_LINK + " Вы можете скачать этого бота с " + DOWNLOAD_URL);
+    mppChatSend(PRE_LINK + " Ты можешь установить этого русского бота по этой ссылке" + DOWNLOAD_URL);
 }
 var feedback = function() {
     mppChatSend(PRE_FEEDBACK + " Пожалуйста, перейдите к " + FEEDBACK_URL + " для отправки отзыва.");
@@ -940,7 +927,7 @@ var ping = function() {
     }, SECOND);
 }
 var play = function(url) {
-    var error = PRE_ERROR + " (Играть)";
+    var error = PRE_ERROR + " (play)";
     // URL needs to be entered to play a song
     if (!exists(url) || url == "") {
         stopLoadingMusic();
@@ -948,7 +935,7 @@ var play = function(url) {
     } else {
         // downloads file if possible and then plays it if it's a MIDI
         urlToBlob(url, function(blob) {
-            if (blob == null) mppChatSend(error + " Недопустимый URL-адрес, это не файл MIDI, или файл требует загрузки вручную с " + quoteString(' ' + url + ' ') + "... " + WHERE_TO_FIND_MIDIS);
+            if (blob == null) mppChatSend(error + " Неверный URL, это не файл MIDI или файл требует ручной загрузки с... " + quoteString(' ' + url + ' ') + "... " + WHERE_TO_FIND_MIDIS);
             else if (isMidi(blob) || isOctetStream(blob)) {
                 // check and limit file size, mainly to prevent browser tab crashing (not enough RAM to load) and deter black midi
                 if (blob.size <= MIDI_FILE_SIZE_LIMIT_BYTES) {
@@ -959,10 +946,10 @@ var play = function(url) {
                                 base64data = base64data.replace("application/octet-stream", "audio/midi");
                             }
                             playURL(url, base64data);
-                        } else mppChatSend(error + " Unexpected result, MIDI file couldn't load... " + WHERE_TO_FIND_MIDIS);
+                        } else mppChatSend(error + " Неожиданный результат, файл MIDI не может быть загружен... " + WHERE_TO_FIND_MIDIS);
                     });
-                } else mppChatSend(error + " The file choosen, \"" + decodeURIComponent(url.substring(url.lastIndexOf('/') + 1)) + "\",  is too big (larger than " + MIDI_FILE_SIZE_LIMIT_BYTES + " bytes), please choose a file with a smaller size");
-            } else mppChatSend(error + " Invalid URL, this is not a MIDI file... " + WHERE_TO_FIND_MIDIS);
+                } else mppChatSend(error + " Выбранный файл, \"" + decodeURIComponent(url.substring(url.lastIndexOf('/') + 1)) + "\",  Слишком большой (Больше чем " + MIDI_FILE_SIZE_LIMIT_BYTES + " байт), пожалуйста, выберите файл меньшего размера");
+            } else mppChatSend(error + "  Неверный URL, это не MIDI-файл... " + WHERE_TO_FIND_MIDIS);
         });
     }
 }
@@ -972,7 +959,7 @@ var stop = function() {
     else {
         stopSong();
         paused = false;
-        mppChatSend(PRE_STOP + " Перестать играть " + quoteString(currentSongName));
+        mppChatSend(PRE_STOP + " Воспроизведение остановлено " + quoteString(currentSongName));
         currentFileLocation = currentSongName = null;
     }
 }
@@ -981,11 +968,11 @@ var pause = function() {
     if (ended) mppChatSend(PRE_PAUSE + ' ' + NO_SONG);
     else {
         var title = PRE_PAUSE + ' ' + getSongTimesFormatted(currentSongElapsedFormatted, currentSongDurationFormatted);
-        if (paused) mppChatSend(title + " The song is already paused");
+        if (paused) mppChatSend(title + " Песня уже на паузе");
         else {
             Player.pause();
             paused = true;
-            mppChatSend(title + " Paused " + quoteString(currentSongName));
+            mppChatSend(title + " Приостановлено " + quoteString(currentSongName));
         }
     }
 }
@@ -997,40 +984,40 @@ var resume = function() {
         if (paused) {
             Player.play();
             paused = false;
-            mppChatSend(title + " Resumed " + quoteString(currentSongName));
-        } else mppChatSend(title + " The song is already playing");
+            mppChatSend(title + " Продолжает " + quoteString(currentSongName));
+        } else mppChatSend(title + " Песня уже играет");
     }
 }
 var song = function() {
     // shows current song playing
     if (exists(currentSongName) && currentSongName != "") {
         mppChatSend(PRE_SONG + ' ' + getSongTimesFormatted(currentSongElapsedFormatted, currentSongDurationFormatted)
-                                   + " Currently " + (paused ? "paused on" : "playing") + ' ' + quoteString(currentSongName));
+                                   + " В настоящее время " + (paused ? "приостановлено" : "Играет") + ' ' + quoteString(currentSongName));
     } else mppChatSend(PRE_SONG + ' ' + NO_SONG);
 }
 var repeat = function() {
     // turns on or off repeat
     repeatOption = !repeatOption;
 
-    mppChatSend(PRE_REPEAT + " Repeat set to " + (repeatOption ? "" : "not") + " repeating");
+    mppChatSend(PRE_REPEAT + " Повторение выбран на " + (repeatOption ? "" : "не") + " Повторяется");
 }
 var sustain = function() {
     // turns on or off sustain
     sustainOption = !sustainOption;
 
-    mppChatSend(PRE_SUSTAIN + " Sustain set to " + (sustainOption ? "MIDI controlled" : "MPP controlled"));
+    mppChatSend(PRE_SUSTAIN + " Синтезатор Выбран на " + (sustainOption ? "MIDI Контроль" : "MPP Контроль"));
 }
 var loading = function(userId, yourId) {
     // only let the bot owner set if loading music should be on or not
     if (userId != yourId) return;
     loadingOption = !loadingOption;
-    mppChatSend(PRE_LOAD_MUSIC + " The MIDI loading progress is now set to " + (loadingOption ? "audio" : "text"));
+    mppChatSend(PRE_LOAD_MUSIC + " Прогресс загрузки MIDI теперь установлен на " + (loadingOption ? "Аудио" : "Текст"));
 }
 var public = function(userId, yourId) {
     // only let the bot owner set if public bot commands should be on or not
     if (userId != yourId) return;
     publicOption = !publicOption;
-    mppChatSend(PRE_PUBLIC + " Public bot commands were turned " + (publicOption ? "on" : "off"));
+    mppChatSend(PRE_PUBLIC + " Публичные команды бота " + (publicOption ? "Теперь включены" : "Теперь выключены"));
 }
 
 // =============================================== MAIN
